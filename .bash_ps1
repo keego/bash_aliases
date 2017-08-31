@@ -86,13 +86,25 @@ PathFull="\W"
 NewLine="\n"
 Jobs="\j"
 
+command_exists () {
+  type "$1" > /dev/null 2>&1 ;
+}
+
+if command_exists scutil ; then
+  # OS X
+  COMPUTER_NAME="$(scutil --get ComputerName)"
+else
+  # Standard
+  COMPUTER_NAME="\h"
+fi
+
 source ~/.git-completion.bash
 source ~/.git-prompt.sh
 
-# This PS1 snippet was adopted from code for MAC/BSD I saw from: http://allancraig.net/index.php?option=com_content&view=article&id=108:ps1-export-command-for-git&catid=45:general&Itemid=96
-# I tweaked it to work on UBUNTU 11.04 & 11.10 plus made it mo' better
+# This PS1 snippet was adopted from code for MAC/BSD from: http://allancraig.net/index.php?option=com_content&view=article&id=108:ps1-export-command-for-git&catid=45:general&Itemid=96
+# It was tweaked to work on UBUNTU 11.04 & 11.10 and be mo' better
 
-export PS1='\n'$IBlack$Time12h$Color_Off'$(git branch &>/dev/null;\
+export PS1='\n'$IBlack$COMPUTER_NAME'\n'$Time12h$Color_Off'$(git branch &>/dev/null;\
 if [ $? -eq 0 ]; then \
   echo "$(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
   if [ "$?" -eq "0" ]; then \
