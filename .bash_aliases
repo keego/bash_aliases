@@ -19,11 +19,15 @@ export Cyan=$'\033[0;36m'
 export White=$'\033[0;37m'
 
 # Terminal
-alias editprofile="atom ~/.bash_profile"
-alias editaliases="atom ~/.bash_aliases"
-alias showaliases="cat ~/.bash_aliases"
+EDIT="code" # default editor
+alias edit_aliases="$EDIT ~/.bash_aliases"
+alias edit_aliases_private="$EDIT ~/.bash_aliases_private"
+alias edit_env="$EDIT ~/.bash_env"
+alias edit_profile="$EDIT ~/.bash_profile"
+alias edit_rc="$EDIT ~/.bash_rc"
+alias show_aliases="cat ~/.bash_aliases && echo && echo '--- private ---' && echo && cat ~/.bash_aliases_private"
 alias reload="source ~/.bash_profile"
-alias realias="source ~/.bash_aliases"
+alias realias="source ~/.bash_aliases && source ~/.bash_aliases_private"
 
 # control whether the OS GUI shows hidden files
 alias showHiddenFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
@@ -39,11 +43,11 @@ function colorize() { echo "${@:2}" | xargs -I {} echo ${!1}{}$ColorReset ; }
 export -f colorize
 function ls-lined() { ls -F | xargs -L 1 echo ; }
 function ls-lined-folders() { ls-lined | grep -iE '[/]$' ; }
-function ls-lined-folders-c() { ls-lined-folders | xargs -I {} bash -c 'colorize Blue {}' ; }
+function ls-lined-folders-c() { ls-lined-folders | xargs -I {} bash -c 'colorize Blue "{}"' ; }
 function ls-lined-files() { ls-lined | grep -iE '[a-zA-Z0-9]$' ; }
-function ls-lined-files-c() { ls-lined-files | xargs -I {} bash -c 'colorize White {}' ; }
+function ls-lined-files-c() { ls-lined-files | xargs -I {} bash -c 'colorize White "{}"' ; }
 function ls-lined-executables() { ls-lined | grep -iE '[*]$' ; }
-function ls-lined-executables-c() { ls-lined-executables | xargs -I {} bash -c 'colorize Green {}' ; }
+function ls-lined-executables-c() { ls-lined-executables | xargs -I {} bash -c 'colorize Green "{}"' ; }
 alias lsc="ls-lined-folders-c && ls-lined-files-c && ls-lined-executables-c"
 
 # Git
@@ -76,6 +80,7 @@ alias restart-server="sudo apachectl stop && sudo apachectl start"
 # Utilities
 # syntax: countlines <regex to include> [<regex to exclude>]
 function countlines () { find . | grep -iE --color=never $1 | grep -v --color=never ${2:-"^$"} | xargs wc -l | grep -iE --color=always "$1|(.*total$)"; }
+# VS Code command line shortcut for OSX, remove for linux
 # syntax: code <dir or file>
 function code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $*; }
 # syntax: lookfore[c] <regex to include> [<regex to exclude>]
