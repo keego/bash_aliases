@@ -57,7 +57,7 @@ function ls-lined-executables-c() { ls-lined-executables | xargs -I {} bash -c '
 alias lsc="ls-lined-folders-c && ls-lined-files-c && ls-lined-executables-c"
 
 # VS Code
-alias edit_snippets="$EDIT ~/Library/Application\ Support/Code/User/Snippets/*"
+alias edit_snippets="open ~/Library/Application\ Support/Code/User/Snippets"
 alias edit_vscode_settings="$EDIT ~/.Library/Application\ Support/Code/User/settings.json"
 
 # Git
