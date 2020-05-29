@@ -8,15 +8,23 @@ alias hideHiddenFiles='defaults write com.apple.finder AppleShowAllFiles NO; kil
 
 # Terminal
 alias edit-aliases="edit ~/.bash_aliases"
-alias realias="source ~/.bash_aliases"
-alias reenv="source ~/.bash_env"
+alias edit-env="edit ~/.bash_env"
+alias edit-private="edit ~/.bash_private"
+alias edit-profile="edit ~/.bash_profilee"
 alias reprofile="VERBOSE_REPROFILE=true source ~/.bash_profile"
 
 # Bash
-alias grepc="grep --color=always"
-alias lookfor="find . | grep -i"
-alias lookfor1="find . -maxdepth 1 | grep -i"
-alias lookforc="find . | grep -i --color=always"
+alias grepc="grep -iE --color=always"
+alias grepv="grep -viE"
+alias lookfor="find . | grep -iE"
+alias lookforc="find . | grepc"
+alias lookfor1="find . -maxdepth 1 | grep -iE"
+alias lookfor1c="find . -maxdepth 1 | grepc"
+alias lookfor2="find . -maxdepth 2 | grep -iE"
+alias lookfor2c="find . -maxdepth 2 | grepc"
+alias lookfor3="find . -maxdepth 2 | grep -iE"
+alias lookfor3c="find . -maxdepth 2 | grepc"
+alias lsc="ls -FG"
 
 # Utilities
 # syntax: countlines <regex to include> [<regex to exclude>]
