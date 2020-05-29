@@ -18,11 +18,19 @@ alias lookforc="find . | grep -i --color=always"
 # Utilities
 # syntax: countlines <regex to include> [<regex to exclude>]
 countlines () { find . | grep -iE --color=never $1 | grep -v --color=never ${2:-"^$"} | xargs wc -l | grep -iE --color=always "$1|(.*total$)"; }
+
 alias ytdlmp3="youtube-dl --extract-audio --audio-format mp3 --output \"%(title)s.%(ext)s\""
 alias ytdl="youtube-dl --output \"%(title)s.%(ext)s\""
 # trim video from start time to start time + duration
 # ffmpeg -i "input-file.mkv" -ss "HH:MM:SS.00" -t "HH:MM:SS.00" "output.mkv"
 # use vlc's file > convert option to convert to mp3
+
+# open with default editor, defined by `EDIT` in your env, falling back to `open`
+edit () { ${EDIT:-'open'} "$1" ; }
+
+# VS Code
+alias edit_snippets="edit ~/Library/Application\ Support/Code/User/Snippets"
+alias edit_vscode_settings="edit ~/.Library/Application\ Support/Code/User/settings.json"
 
 # Git
 alias ga='git add'
@@ -56,3 +64,6 @@ alias gsl='git stash list'
 alias gss='git stash save'
 
 gcht() { git fetch "$1" "$2" && git checkout -t "$1/$2"; }
+git-amend-current-commit-date() { GIT_COMMITTER_DATE="$1" git commit --amend --date="$1" --no-edit ; }
+git-view-changes() { FROM="$1" ; TO="$2" ; git checkout $TO && git reset $FROM --soft ; }
+code-review() { BRANCH="$1" ; git fetch origin master && git checkout code-review && git reset $BRANCH --hard && git reset origin/master --soft ; }

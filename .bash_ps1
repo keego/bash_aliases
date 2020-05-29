@@ -78,6 +78,16 @@ On_IPurple="\[\033[10;95m\]"  # Purple
 On_ICyan="\[\033[0;106m\]"    # Cyan
 On_IWhite="\[\033[0;107m\]"   # White
 
+# Blink
+export Blink=$'\033[0;5m' # Blinking text
+export ResetBlink=$'\033[25m' # Removes blinking text
+
+# Statuses
+export Info=$'\033[0;44;97m' # Blue background
+export Warning=$'\033[0;101;97m' # Red background
+export Success=$'\033[0;102;30m' # Green background
+export Highlight=$'\033[0;43;30m' # Yellow background
+
 # Various variables you might want for your PS1 prompt instead
 Time12h="\T"
 Time12a="\@"
