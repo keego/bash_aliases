@@ -1,10 +1,13 @@
 
+# open with default editor, defined by `EDIT` in your env, falling back to `open`
+edit () { ${EDIT:-'open'} "$1" ; }
+
 # MacOS - control whether the OS GUI shows hidden files
 alias showHiddenFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
 alias hideHiddenFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 
 # Terminal
-alias edit-aliases="code ~/.bash_aliases"
+alias edit-aliases="edit ~/.bash_aliases"
 alias realias="source ~/.bash_aliases"
 alias reenv="source ~/.bash_env"
 alias reprofile="VERBOSE_REPROFILE=true source ~/.bash_profile"
@@ -25,12 +28,9 @@ alias ytdl="youtube-dl --output \"%(title)s.%(ext)s\""
 # ffmpeg -i "input-file.mkv" -ss "HH:MM:SS.00" -t "HH:MM:SS.00" "output.mkv"
 # use vlc's file > convert option to convert to mp3
 
-# open with default editor, defined by `EDIT` in your env, falling back to `open`
-edit () { ${EDIT:-'open'} "$1" ; }
-
 # VS Code
-alias edit_snippets="edit ~/Library/Application\ Support/Code/User/Snippets"
-alias edit_vscode_settings="edit ~/.Library/Application\ Support/Code/User/settings.json"
+alias edit-snippets="edit ~/Library/Application\ Support/Code/User/Snippets"
+alias edit-vscode-settings="edit ~/.Library/Application\ Support/Code/User/settings.json"
 
 # Git
 alias ga='git add'
