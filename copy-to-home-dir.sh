@@ -16,5 +16,6 @@ copy-to-home .bash_env
 copy-to-home .bash_profile
 copy-to-home .bash_ps1
 copy-to-home .tmux.conf
+copy-to-home .hyper.js
 echo "...done!"
 echo
