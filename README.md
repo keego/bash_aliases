@@ -2,6 +2,10 @@
 
 A simple collection of bash profiles and other config files that enhance my dev environment via aliases, a nice git-status prompt, and some tmux settings.
 
+## TODO
+
+- switch to https://github.com/alichtman/shallow-backup
+
 ## usage
 
 1. Download git completion and move it to your home dir.
