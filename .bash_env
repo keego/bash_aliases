@@ -1,3 +1,6 @@
+###
+# Environment variables for various applications
+###
 
 # Setting PATH for Python 3.5
 # The original version is saved in .bash_profile.pysave
@@ -7,13 +10,17 @@
 # nvm
 export NVM_DIR="/Users/keegomyneego/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# yvm
+export YVM_DIR=/Users/kfarley/.yvm
+[ -r $YVM_DIR/yvm.sh ] && source $YVM_DIR/yvm.sh
 
 # Android Studio
-export ANDROID_HOME=/Users/keegomyneego/Library/Android/sdk
+#export ANDROID_HOME=/Users/keegomyneego/Library/Android/sdk
 
 # Java
-# export JAVA_HOME=/usr/bin
-export JAVA_HOME=/Library/Java/Home
+# uh one of these should work?
+#export JAVA_HOME=/usr/bin
+#export JAVA_HOME=/Library/Java/Home
 
-# ROS
-#source /Users/keegomyneego/Documents/Projects/catkin/devel/setup.bash
