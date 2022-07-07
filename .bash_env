@@ -2,11 +2,25 @@
 # Environment variables for various applications
 ###
 
+# Setting PATH for Python 3.5
+# The original version is saved in .bash_profile.pysave
+#PATH="/Library/Frameworks/Python.framework/Versions/3.5/bin:${PATH}"
+#export PATH
+
 # nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # yvm
-export YVM_DIR=/Users/kfarley/.yvm
+export YVM_DIR="$HOME/.yvm"
 [ -r $YVM_DIR/yvm.sh ] && source $YVM_DIR/yvm.sh
+
+# Android Studio
+#export ANDROID_HOME="$HOME/Library/Android/sdk"
+
+# Java
+# uh one of these should work?
+#export JAVA_HOME=/usr/bin
+#export JAVA_HOME=/Library/Java/Home
+
