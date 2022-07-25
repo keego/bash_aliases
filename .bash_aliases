@@ -75,6 +75,22 @@ ssh-keygen-ed25519 () {
 alias edit-snippets="edit ~/Library/Application\ Support/Code/User/Snippets"
 alias edit-vscode-settings="edit ~/.Library/Application\ Support/Code/User/settings.json"
 
+# AWS
+aws-edit-profiles() {
+  edit ~/.aws/config ~/.aws/credentials
+}
+
+aws-set-profile () {
+  echo "Available AWS profiles:"
+  aws configure list-profiles
+  echo
+  echo "Which would you like to use?"
+  read profile
+  echo
+  echo "AWS_PROFILE=$profile"
+  export AWS_PROFILE="$profile"
+}
+
 # Git
 
 in-git-repo () ( git status &> /dev/null; [ $? -eq 0 ]; )
@@ -105,14 +121,14 @@ gclone-check-key () {
     echo-run rm -rf $FOLDER
   fi
   (
-    GIT_SSH_COMMAND="$(git config --get core.sshCommand) -v" git clone "$1" $FOLDER 2>&1 | grepc Offering
+    GIT_SSH_COMMAND="ssh -v" git clone "$1" $FOLDER 2>&1 | grepc Offering
   )
 }
 
 # check which ssh key is used for git fetch
 gfetch-check-key () {
   (
-    GIT_SSH_COMMAND="$(git config --get core.sshCommand) -v" git fetch 2>&1 | grepc Offering
+    GIT_SSH_COMMAND="ssh -v" git fetch 2>&1 | grepc Offering
   )
 }
 
@@ -122,6 +138,10 @@ gconfig () {
   else
     git config --list --show-origin
   fi
+}
+
+gwhoami () {
+  git config --list | grep 'user.'
 }
 
 alias ga='git add'
