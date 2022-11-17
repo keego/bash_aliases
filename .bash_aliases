@@ -2,7 +2,9 @@
 # open with default editor, defined by `EDIT` in your env, falling back to `open`
 edit () { ${EDIT:-'code'} "$@" ; }
 
+# # # #
 # MacOS
+# # # #
 
 # control whether the OS GUI shows hidden files
 alias showHiddenFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
@@ -12,7 +14,9 @@ set-computer-name () {
   scutil --set HostName "$1"
 }
 
+# # # # # #
 # Terminal
+# # # # # #
 
 alias edit-bash="edit ~/.bash*"
 alias edit-aliases="edit ~/.bash_aliases"
@@ -23,7 +27,9 @@ alias edit-bash-all="edit ~/.bash*"
 alias reprofile="VERBOSE_REPROFILE=true source ~/.bash_profile"
 alias realias="source ~/.bash_aliases"
 
+# # # #
 # Bash
+# # # #
 
 alias cdc='pwd | pbcopy'
 alias cdp='cd $(pbpaste)'
@@ -43,13 +49,20 @@ alias lsc="ls -FG"
 
 space() { n=${1-15} ; for i in $(seq $n); do echo ; done }
 
+# # # # # #
 # Utilities
+# # # # # #
 
 # syntax: countlines <regex to include> [<regex to exclude>]
 countlines () { find . | grep -iE --color=never $1 | grep -v --color=never ${2:-"^$"} | xargs wc -l | grep -iE --color=always "$1|(.*total$)"; }
 echo-run () {
+  echo
   echo $@
   "$@"
+}
+# prefix a command with this to preserve its colored output when piping
+unbuff () {
+  script -q >(cat) $* >/dev/null
 }
 
 # alias ytdlmp3="youtube-dl --extract-audio --audio-format mp3 --output \"%(title)s.%(ext)s\""
@@ -58,7 +71,9 @@ echo-run () {
 # ffmpeg -i "input-file.mkv" -ss "HH:MM:SS.00" -t "HH:MM:SS.00" "output.mkv"
 # use vlc's file > convert option to convert to mp3
 
+# # #
 # SSH
+# # #
 
 ssh-keygen-ed25519 () {
   if [[ $# -ne 2 ]]; then
@@ -70,12 +85,17 @@ ssh-keygen-ed25519 () {
   ssh-keygen -o -a 100 -t ed25519 -f ~/.ssh/$KEY_NAME -C “$EMAIL @ $HOSTNAME”
 }
 
+# # # # #
 # VS Code
+# # # # #
 
 alias edit-snippets="edit ~/Library/Application\ Support/Code/User/Snippets"
 alias edit-vscode-settings="edit ~/.Library/Application\ Support/Code/User/settings.json"
 
+# # #
 # AWS
+# # #
+
 aws-edit-profiles() {
   edit ~/.aws/config ~/.aws/credentials
 }
@@ -91,7 +111,13 @@ aws-set-profile () {
   export AWS_PROFILE="$profile"
 }
 
+aws-whoami () {
+  echo $AWS_PROFILE
+}
+
+# # #
 # Git
+# # #
 
 in-git-repo () ( git status &> /dev/null; [ $? -eq 0 ]; )
 not-in-git-repo () ( git status &> /dev/null; [ $? -ne 0 ]; )
@@ -100,7 +126,10 @@ get-git-scope () { if in-git-repo; then echo '--local' ; else echo '--global' ; 
 # git set user
 gsu () {
   if [[ $# -ne 3 ]]; then
-    echo "Usage: git-set-user id_privatekey_name \"Full Name\" my.email@gmail.com" >&2
+    echo "Usage: gsu id_privatekey_name \"Full Name\" my.email@gmail.com" >&2
+    echo
+    echo "Found these possible private keys in ~/.ssh:"
+    ls ~/.ssh | grepv 'pub|known_hosts'
     return 2
   fi
   local KEY_FILE=~/.ssh/$1
@@ -108,10 +137,12 @@ gsu () {
   local EMAIL=$3
   local SCOPE=$(get-git-scope)
   # echo-run git config $SCOPE core.sshCommand "ssh -i $KEY_FILE"
-  echo-run ssh-add -D
-  echo-run ssh-add $KEY_FILE
-  echo-run git config $SCOPE user.name "$NAME"
-  echo-run git config $SCOPE user.email "$EMAIL"
+  echo-run ssh-add -D &&
+  echo-run ssh-add $KEY_FILE &&
+  echo-run git config $SCOPE user.name "$NAME" &&
+  echo-run git config $SCOPE user.email "$EMAIL" &&
+  (echo && echo 'success!') ||
+  (echo && echo 'failed!')
 }
 
 # check which ssh key is used for git clone, cloned repo is thrown away
@@ -141,7 +172,27 @@ gconfig () {
 }
 
 gwhoami () {
-  git config --list | grep 'user.'
+  git config --list --show-origin | grep 'user.'
+}
+
+gisancestor () {
+  if [[ $# -ne 2 ]]; then
+    echo "Usage: $FUNCNAME <maybe-ancestor-treeish> <tip-treeish>" >&2
+    echo
+    return 2
+  fi
+  local ANCESTOR=$1
+  local TIP=$2
+  git merge-base --is-ancestor $ANCESTOR $TIP
+  local EXIT_CODE=$?
+
+  if [ $EXIT_CODE -eq 0 ]; then
+    echo $TIP descends from $ANCESTOR
+  else
+    echo $TIP does not descend from $ANCESTOR
+  fi
+
+  return $EXIT_CODE
 }
 
 alias ga='git add'
