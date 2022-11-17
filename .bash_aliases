@@ -46,12 +46,26 @@ alias lookfor3c="find . -maxdepth 3 | grepc"
 alias lookfor4="find . -maxdepth 4 | grep -iE"
 alias lookfor4c="find . -maxdepth 4 | grepc"
 alias lsc="ls -FG"
+alias lsc2="find . -type d -depth 1 -print -exec ls -FG1 {} \; -exec echo \;"
+alias lscr="find . -type d -mindepth 1 -print -exec ls -FG1 {} \; -exec echo \;"
 
-space() { n=${1-15} ; for i in $(seq $n); do echo ; done }
+# # # # # #
+# DJ Tools
+# # # # # #
+
+copy-new-files () { rsync -vzrh --ignore-existing "$1"/ "$2"/ ; }
+MUSIC_SRC_SPOTIFY="/Users/keegomyneego/Documents/Tunelf\ Music\ Converter/Copying"
+MUSIC_DST_SPOTIFY="/Volumes/DJ\ KEEGLE/Downloaded/_Unsorted\ from\ Spotify"
+alias sync-dj-downloads-spotify="copy-new-files $MUSIC_SRC_SPOTIFY $MUSIC_DST_SPOTIFY"
+MUSIC_SRC_DEEMIX="/Users/keegomyneego/Music/Downloaded/Music/_Unsorted\ from\ deemix"
+MUSIC_DST_DEEMIX="/Volumes/DJ\ KEEGLE/Downloaded/_Unsorted\ from\ deemix"
+alias sync-dj-downloads-deemix="copy-new-files $MUSIC_SRC_DEEMIX $MUSIC_DST_DEEMIX"
 
 # # # # # #
 # Utilities
 # # # # # #
+
+space() { n=${1-15} ; for i in $(seq $n); do echo ; done }
 
 # syntax: countlines <regex to include> [<regex to exclude>]
 countlines () { find . | grep -iE --color=never $1 | grep -v --color=never ${2:-"^$"} | xargs wc -l | grep -iE --color=always "$1|(.*total$)"; }
