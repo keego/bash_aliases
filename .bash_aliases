@@ -58,8 +58,9 @@ MUSIC_SRC_SPOTIFY="/Users/keegomyneego/Documents/Tunelf\ Music\ Converter/Copyin
 MUSIC_DST_SPOTIFY="/Volumes/DJ\ KEEGLE/Downloaded/_Unsorted\ from\ Spotify"
 alias sync-dj-downloads-spotify="copy-new-files $MUSIC_SRC_SPOTIFY $MUSIC_DST_SPOTIFY"
 MUSIC_SRC_DEEMIX="/Users/keegomyneego/Music/Downloaded/Music/_Unsorted\ from\ deemix"
+MUSIC_SRC_DEEMIX_20_AIR="/Users/keegomyneego/Music/deemix\ Music"
 MUSIC_DST_DEEMIX="/Volumes/DJ\ KEEGLE/Downloaded/_Unsorted\ from\ deemix"
-alias sync-dj-downloads-deemix="copy-new-files $MUSIC_SRC_DEEMIX $MUSIC_DST_DEEMIX"
+alias sync-dj-downloads-deemix="copy-new-files $MUSIC_SRC_DEEMIX_20_AIR $MUSIC_DST_DEEMIX"
 
 # # # # # #
 # Utilities
@@ -266,3 +267,5 @@ gcht() { git fetch "$1" "$2" && git checkout -t "$1/$2"; }
 git-amend-current-commit-date() { GIT_COMMITTER_DATE="$1" git commit --amend --date="$1" --no-edit ; }
 git-view-changes() { FROM="$1" ; TO="$2" ; git checkout $TO && git reset $FROM --soft ; }
 code-review() { BRANCH="$1" ; git fetch origin master && git checkout code-review && git reset $BRANCH --hard && git reset origin/master --soft ; }
+
+alias git-get-default-branch="git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'"
