@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# # # # # #
+# DJ Tools
+# # # # # #
+
+# use rsync to copy changed files from a source to a destination
+copy-new-files () { rsync -vzrh --ignore-existing "$1"/ "$2"/ ; }
+copy-new-files-dry-run () { rsync -vzrh --ignore-existing --dry-run "$1"/ "$2"/ ; }
+
+#
+# Locations
+#
+
+DJ_STICK_ROOT="/Volumes/DJ\ KEEGLE/Downloaded"
+
+#
+# Sync commands - Spotify
+#
+
+MUSIC_SRC_SPOTIFY="/Users/keegomyneego/Documents/Tunelf\ Music\ Converter/Copying"
+# MUSIC_DST_SPOTIFY="/Volumes/DJ\ KEEGLE/Downloaded/_Unsorted\ from\ Spotify"
+MUSIC_DST_SPOTIFY="$DJ_STICK_ROOT/_Unsorted\ from\ Spotify"
+
+alias sync-dj-downloads-spotify="copy-new-files $MUSIC_SRC_SPOTIFY $MUSIC_DST_SPOTIFY"
+
+#
+# Sync commands - Deemix
+#
+
+MUSIC_SRC_DEEMIX="/Users/keegomyneego/Music/Downloaded/Music/_Unsorted\ from\ deemix"
+MUSIC_SRC_DEEMIX_20_AIR="/Users/keeganfarley/Music/deemix\ Music"
+# MUSIC_DST_DEEMIX="/Volumes/DJ\ KEEGLE/Downloaded/_Unsorted\ from\ deemix"
+MUSIC_DST_DEEMIX="$DJ_STICK_ROOT/_Unsorted\ from\ deemix"
+
+alias sync-dj-downloads-deemix="copy-new-files $MUSIC_SRC_DEEMIX_20_AIR $MUSIC_DST_DEEMIX"
+alias sync-dj-downloads-deemix-dry-run="copy-new-files-dry-run $MUSIC_SRC_DEEMIX_20_AIR $MUSIC_DST_DEEMIX"
+
+#
+# Sync commands - Apple Music
+#
+
+MUSIC_SRC_APPLE_20_AIR="/Users/keeganfarley/Documents/NoteBurner\ iTunes\ DRM\ Audio\ Converter/Convert\ Queue"
+# MUSIC_DST_APPLE="/Volumes/DJ\ KEEGLE/Downloaded/_Unsorted\ from\ Apple\ Music"
+MUSIC_DST_APPLE="$DJ_STICK_ROOT/_Unsorted\ from\ Apple\ Music"
+
+alias sync-dj-downloads-apple="copy-new-files $MUSIC_SRC_APPLE_20_AIR $MUSIC_DST_APPLE"

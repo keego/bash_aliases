@@ -1,0 +1,142 @@
+#!/bin/bash
+
+# # #
+# Git
+# # #
+
+in-git-repo () ( git status &> /dev/null; [ $? -eq 0 ]; )
+not-in-git-repo () ( git status &> /dev/null; [ $? -ne 0 ]; )
+get-git-scope () { if in-git-repo; then echo '--local' ; else echo '--global' ; fi  }
+
+# git set user
+gsu () {
+  if [[ $# -ne 3 ]]; then
+    echo "Usage: gsu id_privatekey_name \"Full Name\" my.email@gmail.com" >&2
+    echo
+    echo "Found these possible private keys in ~/.ssh:"
+    ls ~/.ssh | grepv 'pub|known_hosts'
+    return 2
+  fi
+  local KEY_FILE=~/.ssh/$1
+  local NAME=$2
+  local EMAIL=$3
+  local SCOPE=$(get-git-scope)
+  # echo-run git config $SCOPE core.sshCommand "ssh -i $KEY_FILE"
+  echo-run ssh-add -D &&
+  echo-run ssh-add $KEY_FILE &&
+  echo-run git config $SCOPE user.name "$NAME" &&
+  echo-run git config $SCOPE user.email "$EMAIL" &&
+  (echo && echo 'success!') ||
+  (echo && echo 'failed!')
+}
+
+# check which ssh key is used for git clone, cloned repo is thrown away
+gclone-check-key () {
+  local FOLDER="/tmp/clone-check"
+  if [[ -e $FOLDER ]]; then
+    echo-run rm -rf $FOLDER
+  fi
+  (
+    GIT_SSH_COMMAND="ssh -v" git clone "$1" $FOLDER 2>&1 | grepc Offering
+  )
+}
+
+# check which ssh key is used for git fetch
+gfetch-check-key () {
+  (
+    GIT_SSH_COMMAND="ssh -v" git fetch 2>&1 | grepc Offering
+  )
+}
+
+gconfig () {
+  if [[ $# -ne 0 ]]; then
+    git config --list --show-origin | grepc $@
+  else
+    git config --list --show-origin
+  fi
+}
+
+gwhoami () {
+  git config --list --show-origin | grep 'user.'
+}
+
+gisancestor () {
+  if [[ $# -ne 2 ]]; then
+    echo "Usage: $FUNCNAME <maybe-ancestor-treeish> <tip-treeish>" >&2
+    echo
+    return 2
+  fi
+  local ANCESTOR=$1
+  local TIP=$2
+  git merge-base --is-ancestor $ANCESTOR $TIP
+  local EXIT_CODE=$?
+
+  if [ $EXIT_CODE -eq 0 ]; then
+    echo $TIP descends from $ANCESTOR
+  else
+    echo $TIP does not descend from $ANCESTOR
+  fi
+
+  return $EXIT_CODE
+}
+
+alias ga='git add'
+alias gaa='git add -A && git status'
+
+alias gb='git branch'
+alias gbuoh='git branch -u origin/$(grph)'
+gbdoh () {
+  BRANCH="$(grph)"
+  git checkout HEAD --detach --quiet
+  echo
+  echo "deleting remote $BRANCH ..."
+  git push origin --delete "$BRANCH"
+  echo
+  echo "deleting local $BRANCH ..."
+  git branch -d $BRANCH
+}
+
+alias gc='git commit'
+alias gcane='git commit --amend --no-edit'
+alias gcanenv='gcane --no-verify'
+alias gch='git checkout'
+alias gcm='git commit -m'
+alias gcmwip='git add -A && git commit -m "WIP" --no-verify'
+
+alias gd='git diff'
+alias gdns='git diff  --name-status'
+alias gdnscc="gdns | cut -f 2 | xargs code"
+alias gdhns='git diff HEAD~ HEAD --name-status'
+alias gdi='git diff --ignore-space-at-eol'
+alias gdwc='echo " " +$(git diff | grep -e "^[+][^+]" | wc -l) -$(git diff | grep -e "^[-][^-]" | wc -l)'
+alias gdswc='echo " " +$(git diff --staged | grep -e "^[+][^+]" | wc -l) -$(git diff --staged | grep -e "^[-][^-]" | wc -l)'
+
+alias gf='git fetch --all --prune'
+alias gfom='git fetch origin master:master'
+
+alias gl='git log --decorate --abbrev-commit'
+alias glg='git log --decorate --abbrev-commit --graph'
+alias glgp='git log --decorate --abbrev-commit --graph --pretty=oneline'
+alias glp='git log --decorate --abbrev-commit --pretty=oneline'
+alias glt='git log --pretty="%C(auto)[ Authored %ad -- Committed %cd ] %h %d %s" --date=local'
+
+alias gpullohr='glp -5 && git pull origin $(grph) --rebase'
+alias gpullom='git pull origin master'
+alias gpullomd='gch HEAD --detach && git fetch origin master:master && gch master'
+alias gpushoh='git push origin $(grph)'
+alias grph='git rev-parse --abbrev-ref HEAD'
+alias grphc='echo $(git rev-parse --abbrev-ref HEAD) | pbcopy'
+
+alias gs='git status'
+alias gsa='git stash apply'
+alias gsl='git stash list'
+alias gss='git stash save'
+alias gsedit='git status | grep "\t" | cut -d":" -f 2- | xargs code'
+
+gcht() { git fetch "$1" "$2" && git checkout -t "$1/$2" ; }
+gtd() { git tag -d "$*" && git push --delete origin "$*" ; }
+git-amend-current-commit-date() { GIT_COMMITTER_DATE="$1" git commit --amend --date="$1" --no-edit ; }
+git-view-changes() { FROM="$1" ; TO="$2" ; git checkout $TO && git reset $FROM --soft ; }
+code-review() { BRANCH="$1" ; git fetch origin master && git checkout code-review && git reset $BRANCH --hard && git reset origin/master --soft ; }
+
+alias git-get-default-branch="git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'"
