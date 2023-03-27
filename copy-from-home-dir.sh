@@ -2,6 +2,7 @@
 
 copy-from-home () {
   if [ -e ~/"$1" ] ; then
+    rm -r ./"$1"
     cp -ivr ~/"$1" ./
   else
     echo "skipping" ~/"$1"
