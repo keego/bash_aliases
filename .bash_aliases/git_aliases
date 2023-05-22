@@ -1,5 +1,41 @@
 #!/bin/bash
 
+# Utility for executing multiple commands and backing out on failure
+execute-commands () {
+  if [[ $# -lt 1 ]]; then
+    echo "${FUNCNAME} takes an array of command strings and executes them in order"
+    echo "bailing as soon as the first one exits with a non-zero exit code."
+    echo
+    local usage_texts=(
+      'Example usage:'
+      '  example-fn () {'
+      '    local commands=('
+      '      "echo cmd 1"'
+      '      "echo cmd 2"'
+      '      "echo cmd 3"'
+      '    )'
+      "    ${FUNCNAME} \"\${commands[@]}\""
+      '  }'
+    )
+    for text in "${usage_texts[@]}"; do
+      echo "$text" >&2
+    done
+    
+    return 2
+  fi
+
+  for command in "$@"; do
+    echo "eval \"$command\"..."
+    eval "$command"
+    local exit_code="$?"
+    if [[ $exit_code -ne 0 ]]; then
+      echo "\"$command\" failed"
+      return $exit_code
+    fi
+    echo
+  done
+}
+
 # # #
 # Git
 # # #
@@ -7,6 +43,19 @@
 in-git-repo () ( git status &> /dev/null; [ $? -eq 0 ]; )
 not-in-git-repo () ( git status &> /dev/null; [ $? -ne 0 ]; )
 get-git-scope () { if in-git-repo; then echo '--local' ; else echo '--global' ; fi  }
+
+git-get-default-remote-branch () {
+  if [[ $# -gt 1 ]]; then
+    echo "${FUNCNAME} gets the default branch name of a given git origin"
+    echo
+    echo "Usage: ${FUNCNAME} [remote='origin']" >&2
+    return 2
+  fi
+  local REMOTE=${1:-'origin'}
+  # formerly git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+  # but that's slightly more error prone than below solution
+  git remote show $REMOTE | grep 'HEAD branch' | cut -d' ' -f5
+}
 
 # git set user
 gsu () {
@@ -100,6 +149,7 @@ alias gc='git commit'
 alias gcane='git commit --amend --no-edit'
 alias gcanenv='gcane --no-verify'
 alias gch='git checkout'
+gcht() { git fetch "$1" "$2" && git checkout -t "$1/$2" ; }
 alias gcm='git commit -m'
 alias gcmwip='git add -A && git commit -m "WIP" --no-verify'
 
@@ -112,7 +162,12 @@ alias gdwc='echo " " +$(git diff | grep -e "^[+][^+]" | wc -l) -$(git diff | gre
 alias gdswc='echo " " +$(git diff --staged | grep -e "^[+][^+]" | wc -l) -$(git diff --staged | grep -e "^[-][^-]" | wc -l)'
 
 alias gf='git fetch --all --prune'
-alias gfom='git fetch origin master:master'
+gfom () {
+  local default_remote_branch=`git-get-default-remote-branch`
+  local command="git fetch origin $default_remote_branch:$default_remote_branch"
+  echo $command
+  eval $command
+}
 
 alias gl='git log --decorate --abbrev-commit'
 alias glg='git log --decorate --abbrev-commit --graph'
@@ -121,8 +176,16 @@ alias glp='git log --decorate --abbrev-commit --pretty=oneline'
 alias glt='git log --pretty="%C(auto)[ Authored %ad -- Committed %cd ] %h %d %s" --date=local'
 
 alias gpullohr='glp -5 && git pull origin $(grph) --rebase'
-alias gpullom='git pull origin master'
-alias gpullomd='gch HEAD --detach && git fetch origin master:master && gch master'
+alias gpullom='git pull origin `git-get-default-remote-branch`'
+gpullomd () {
+  local default_remote_branch=`git-get-default-remote-branch`
+  local commands=(
+    "gch HEAD --detach"
+    "git fetch origin $default_remote_branch:$default_remote_branch"
+    "gch $default_remote_branch"
+  )
+  execute-commands "${commands[@]}"
+}
 alias gpushoh='git push origin $(grph)'
 alias grph='git rev-parse --abbrev-ref HEAD'
 alias grphc='echo $(git rev-parse --abbrev-ref HEAD) | pbcopy'
@@ -133,10 +196,24 @@ alias gsl='git stash list'
 alias gss='git stash save'
 alias gsedit='git status | grep "\t" | cut -d":" -f 2- | xargs code'
 
-gcht() { git fetch "$1" "$2" && git checkout -t "$1/$2" ; }
 gtd() { git tag -d "$*" && git push --delete origin "$*" ; }
+
 git-amend-current-commit-date() { GIT_COMMITTER_DATE="$1" git commit --amend --date="$1" --no-edit ; }
 git-view-changes() { FROM="$1" ; TO="$2" ; git checkout $TO && git reset $FROM --soft ; }
-code-review() { BRANCH="$1" ; git fetch origin master && git checkout code-review && git reset $BRANCH --hard && git reset origin/master --soft ; }
-
-alias git-get-default-branch="git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'"
+code-review() {
+  if [[ $# -ne 1 ]]; then
+    echo "Usage: $FUNCNAME <branch>" >&2
+    return 2
+  fi
+  local branch="$1"
+  local cr_branch="code-review/$1"
+  local default_remote_branch=`git-get-default-remote-branch`
+  local commands=(
+    "git checkout --detach"
+    "git fetch origin $default_remote_branch"
+    "git branch -f $cr_branch $branch"
+    "git checkout $cr_branch"
+    "git reset origin/$default_remote_branch --soft"
+  )
+  execute-commands "${commands[@]}"
+}
