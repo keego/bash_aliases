@@ -20,7 +20,8 @@ copy-to-home .bash_aliases
 copy-to-home .bash_env
 copy-to-home .bash_profile
 copy-to-home .bash_ps1
-copy-to-home .tmux.conf
 copy-to-home .hyper.js
+copy-to-home .ripgrep
+copy-to-home .tmux.conf
 echo "...done!"
 echo
