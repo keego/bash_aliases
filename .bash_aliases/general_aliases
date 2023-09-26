@@ -25,7 +25,7 @@ alias edit-private="edit ~/.bash_private"
 alias edit-profile="edit ~/.bash_profile"
 alias edit-bash-all="edit ~/.bash*"
 alias reprofile="VERBOSE_REPROFILE=true source ~/.bash_profile"
-alias realias="source ~/.bash_aliases"
+alias realias="source-all ~/.bash_aliases"
 
 # # # #
 # Bash
