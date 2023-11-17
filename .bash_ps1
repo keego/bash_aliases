@@ -5,88 +5,93 @@
 #  Bunch-o-predefined colors.  Makes reading code easier than escape sequences.
 #  I don't remember where I found this.  o_O
 
+# As per https://stackoverflow.com/a/34252007/3234235
+# - use \001 and \002 for RL_PROMPT_START_IGNORE and RL_PROMPT_END_IGNORE respectively
+#   (i.e. prevent fucking up cursors and scrolling)
+# - use \033 over \e for portability
+set-color () {
+  local special=$1
+  local color=$2
+
+  echo -e "\001\033[${special};${color}m\002"
+}
+
 # Reset
-export Color_Off="\033[0m"       # Text Reset
-
-# Regular Colors
-export Black=$'\033[0;30m'            # Black
-export Red=$'\033[0;31m'              # Red
-export Green=$'\033[0;32m'            # Green
-export Yellow=$'\033[0;33m'           # Yellow
-export Blue=$'\033[0;34m'             # Blue
-export Purple=$'\033[0;35m'           # Purple
-export Cyan=$'\033[0;36m'             # Cyan
-export White=$'\033[0;37m'            # White
-
-# Bold
-export BBlack=$'\033[1;30m'           # Black
-export BRed=$'\033[1;31m'             # Red
-export BGreen=$'\033[1;32m'           # Green
-export BYellow=$'\033[1;33m'          # Yellow
-export BBlue=$'\033[1;34m'            # Blue
-export BPurple=$'\033[1;35m'          # Purple
-export BCyan=$'\033[1;36m'            # Cyan
-export BWhite=$'\033[1;37m'           # White
-
-# Underline
-export UBlack=$'\033[4;30m'           # Black
-export URed=$'\033[4;31m'             # Red
-export UGreen=$'\033[4;32m'           # Green
-export UYellow=$'\033[4;33m'          # Yellow
-export UBlue=$'\033[4;34m'            # Blue
-export UPurple=$'\033[4;35m'          # Purple
-export UCyan=$'\033[4;36m'            # Cyan
-export UWhite=$'\033[4;37m'           # White
-
-# Background
-export On_Black=$'\033[0;37;40m'      # Black
-export On_Red=$'\033[41m'             # Red
-export On_Green=$'\033[42m'           # Green
-export On_Yellow=$'\033[43m'          # Yellow
-export On_Blue=$'\033[44m'            # Blue
-export On_Purple=$'\033[45m'          # Purple
-export On_Cyan=$'\033[46m'            # Cyan
-export On_White=$'\033[0;30;47m'      # White
-
-# High Intensty
-export IBlack=$'\033[0;90m'           # Black
-export IRed=$'\033[0;91m'             # Red
-export IGreen=$'\033[0;92m'           # Green
-export IYellow=$'\033[0;93m'          # Yellow
-export IBlue=$'\033[0;94m'            # Blue
-export IPurple=$'\033[0;95m'          # Purple
-export ICyan=$'\033[0;96m'            # Cyan
-export IWhite=$'\033[0;97m'           # White
-
-# Bold High Intensty
-export BIBlack=$'\033[1;90m'          # Black
-export BIRed=$'\033[1;91m'            # Red
-export BIGreen=$'\033[1;92m'          # Green
-export BIYellow=$'\033[1;93m'         # Yellow
-export BIBlue=$'\033[1;94m'           # Blue
-export BIPurple=$'\033[1;95m'         # Purple
-export BICyan=$'\033[1;96m'           # Cyan
-export BIWhite=$'\033[1;97m'          # White
-
-# High Intensty backgrounds
-export On_IBlack=$'\033[0;37;100m'       # Black
-export On_IRed=$'\033[0;101m'         # Red
-export On_IGreen=$'\033[0;102m'       # Green
-export On_IYellow=$'\033[0;103m'      # Yellow
-export On_IBlue=$'\033[0;104m'        # Blue
-export On_IPurple=$'\033[10;95m'      # Purple
-export On_ICyan=$'\033[0;106m'        # Cyan
-export On_IWhite=$'\033[0;30;107m'    # White
+Color_Off="$(set-color  0 0)"     # Text Reset
 
 # Blink
-export Blink=$'\033[5m'               # Blinking text
-export ResetBlink=$'\033[25m'         # Removes blinking text
+Blink="$(set-color      0 5)"     # Blinking text
+Blink_Off="$(set-color  0 25)"     # Removes blinking text
 
-# Statuses
-export Info=$'\033[0;44;97m'          # Blue background
-export Warning=$'\033[0;101;97m'      # Red background
-export Success=$'\033[0;102;30m'      # Green background
-export Highlight=$'\033[0;43;30m'     # Yellow background
+# Regular Colors
+Black="$(set-color      0 30)"    # Black
+Red="$(set-color        0 31)"    # Red
+Green="$(set-color      0 32)"    # Green
+Yellow="$(set-color     0 33)"    # Yellow
+Blue="$(set-color       0 34)"    # Blue
+Purple="$(set-color     0 35)"    # Purple
+Cyan="$(set-color       0 36)"    # Cyan
+White="$(set-color      0 37)"    # White
+
+# Bold
+BBlack="$(set-color     1 30)"    # Black
+BRed="$(set-color       1 31)"    # Red
+BGreen="$(set-color     1 32)"    # Green
+BYellow="$(set-color    1 33)"    # Yellow
+BBlue="$(set-color      1 34)"    # Blue
+BPurple="$(set-color    1 35)"    # Purple
+BCyan="$(set-color      1 36)"    # Cyan
+BWhite="$(set-color     1 37)"    # White
+
+# Underline
+UBlack="$(set-color     4 30)"    # Black
+URed="$(set-color       4 31)"    # Red
+UGreen="$(set-color     4 32)"    # Green
+UYellow="$(set-color    4 33)"    # Yellow
+UBlue="$(set-color      4 34)"    # Blue
+UPurple="$(set-color    4 35)"    # Purple
+UCyan="$(set-color      4 36)"    # Cyan
+UWhite="$(set-color     4 37)"    # White
+
+# Background
+On_Black="$(set-color   0 40)"    # Black
+On_Red="$(set-color     0 41)"    # Red
+On_Green="$(set-color   0 42)"    # Green
+On_Yellow="$(set-color  0 43)"    # Yellow
+On_Blue="$(set-color    0 44)"    # Blue
+On_Purple="$(set-color  0 45)"    # Purple
+On_Cyan="$(set-color    0 46)"    # Cyan
+On_White="$(set-color   0 47)"    # White
+
+# High Intensty
+IBlack="$(set-color     0 90)"    # Black
+IRed="$(set-color       0 91)"    # Red
+IGreen="$(set-color     0 92)"    # Green
+IYellow="$(set-color    0 93)"    # Yellow
+IBlue="$(set-color      0 94)"    # Blue
+IPurple="$(set-color    0 95)"    # Purple
+ICyan="$(set-color      0 96)"    # Cyan
+IWhite="$(set-color     0 97)"    # White
+
+# Bold High Intensty
+BIBlack="$(set-color    1 90)"    # Black
+BIRed="$(set-color      1 91)"    # Red
+BIGreen="$(set-color    1 92)"    # Green
+BIYellow="$(set-color   1 93)"    # Yellow
+BIBlue="$(set-color     1 94)"    # Blue
+BIPurple="$(set-color   1 95)"    # Purple
+BICyan="$(set-color     1 96)"    # Cyan
+BIWhite="$(set-color    1 97)"    # White
+
+# High Intensty backgrounds
+On_IBlack="$(set-color  0 100)"   # Black
+On_IRed="$(set-color    0 101)"   # Red
+On_IGreen="$(set-color  0 102)"   # Green
+On_IYellow="$(set-color 0 103)"   # Yellow
+On_IBlue="$(set-color   0 104)"   # Blue
+On_IPurple="$(set-color 0 105)"   # Purple
+On_ICyan="$(set-color   0 106)"   # Cyan
+On_IWhite="$(set-color  0 107)"   # White
 
 # Various variables you might want for your PS1 prompt instead
 Time12h="\T"
