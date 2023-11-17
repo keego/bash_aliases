@@ -17,4 +17,4 @@ export YVM_DIR="$HOME/.yvm"
 [ -r $YVM_DIR/yvm.sh ] && source $YVM_DIR/yvm.sh
 
 # brew
-eval "$(/opt/homebrew/bin/brew shellenv)"
+[ -r /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
