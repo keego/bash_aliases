@@ -134,3 +134,21 @@ else \
   # @2 - Prompt when not in GIT repo
   echo " '$Yellow$PathFull$Color_Off'\n'$PromptSymbol' "; \
 fi)'
+
+set-ps1 () {
+  local comp_color="$1"
+  PS1='\n'$comp_color$COMPUTER_NAME$IBlack'\n'$Time12h$Color_Off'$(git branch &>/dev/null;\
+  if [ $? -eq 0 ]; then \
+    echo "$(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
+    if [ "$?" -eq "0" ]; then \
+      # @4 - Clean repository - nothing to commit
+      echo "'$Green'"$(__git_ps1 " (%s)"); \
+    else \
+      # @5 - Changes to working tree
+      echo "'$IRed'"$(__git_ps1 " {%s}"); \
+    fi) '$Blue$PathShort$Color_Off'\n'$PromptSymbol' "; \
+  else \
+    # @2 - Prompt when not in GIT repo
+    echo " '$Yellow$PathFull$Color_Off'\n'$PromptSymbol' "; \
+  fi)'
+}
