@@ -130,9 +130,9 @@ ssh-keygen-ed25519 () {
     echo "Usage: ssh-keygen-ed25519 id_privatekey_name my.email@gmail.com" >&2
     return 2
   fi
-  local KEY_NAME=$1
-  local EMAIL=$2
-  ssh-keygen -o -a 100 -t ed25519 -f ~/.ssh/$KEY_NAME -C “$EMAIL @ $HOSTNAME”
+  local KEY_NAME="$1"
+  local EMAIL="$2"
+  ssh-keygen -a 100 -t ed25519 -f "~/.ssh/$KEY_NAME" -C “$EMAIL\ @\ $HOSTNAME”
 }
 
 # # # # #
