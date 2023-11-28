@@ -132,7 +132,7 @@ ssh-keygen-ed25519 () {
   fi
   local KEY_NAME="$1"
   local EMAIL="$2"
-  ssh-keygen -a 100 -t ed25519 -f "$KEY_NAME" -C “$EMAIL\ @\ $HOSTNAME”
+  ssh-keygen -a 100 -t ed25519 -f ~/.ssh/"$KEY_NAME" -C “$EMAIL\ @\ $HOSTNAME”
 }
 
 # # # # #
