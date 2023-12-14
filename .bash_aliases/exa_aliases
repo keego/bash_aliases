@@ -16,15 +16,18 @@ then
   alias ll\-="exa -lh --git ${EXA_OPTIONS}" # list permissions
   # replaces exa -TL <DEPTH>
   function lt () { exa -lh --git ${EXA_OPTIONS} --tree --level="${1:-1}" ; }
+  dots () { echo -en "$Black $1 $Color_Off" }
+
   alias exa\?='
   echo -e "$Info Exa Options: ${Color_Off}" &&
-  echo -e "l ${Black} ...... ${Color_Off}  default" &&
+  echo -e "l $(dots ......)  default ${Purple} =ls ${Color_Off}" &&
   echo -e "la ${Black} ..... ${Color_Off}  default ${Red}  all ${Color_Off}" &&
-  echo -e "lg ${Black} ..... ${Color_Off} ${Blue} grid ${Color_Off}    ${Purple} =ls ${Color_Off}" &&
-  echo -e "lg- ${Black} .... ${Color_Off} ${Blue} grid ${Red}     all ${Color_Off}" &&
-  echo -e "ll ${Black} ..... ${Color_Off} ${Yellow} list ${Color_Off}" &&
-  echo -e "lld ${Black} .... ${Color_Off} ${Yellow} list ${Red}     all ${Color_Off}" &&
-  echo -e "ll- ${Black} ..... ${Color_Off} ${Yellow} list permissions ${Color_Off}" &&
+  echo -e "lg ${Black} ..... ${Color_Off} ${Blue} grid ${Color_Off}    ${Red} all ${Color_Off}" &&
+  echo -e "lg- ${Black} .... ${Color_Off} ${Blue} grid ${Color_Off}    ${Purple} =ls ${Color_Off}" &&
+  echo -e "ll ${Black} ..... ${Color_Off} ${Yellow} long ${Color_Off}    ${Red} all ${Color_Off}" &&
+  echo -e "ll- ${Black} .... ${Color_Off} ${Yellow} long ${Color_Off}" &&
+  echo -e "lld ${Black} .... ${Color_Off} ${Yellow} long ${Color_Off}    ${Red} dirs ${Color_Off}" &&
+  echo -e "lld- ${Black} ... ${Color_Off} ${Yellow} long ${Color_Off}    ${Red} all dirs ${Color_Off}" &&
   echo -e "lt ${Black} ..... ${Color_Off} ${Green} tree ${Color_Off}     specify depth, default = 1"
   '
 fi

@@ -31,9 +31,49 @@ copy-to-home () {
   fi
 }
 
+cache-home-path () {
+  local path="$1"
+  if [ -e ~/"$path" ] ; then
+    echo '[ cache ]' caching '~/'"$path"
+    cp -vr ~/"$path" "$CACHE_DIR/$path"
+  else
+    echo '[ cache ]' skipping '~/'"$path"
+  fi
+}
+
+override-bashrc () {
+  if [ -e ./.bashrc ] ; then
+    cache-home-path .bashrc
+    cache-home-path .bash
+
+    rm -r ~/.bashrc
+    rm -r ~/.bash
+
+    if [ ! -d ~/.bash ] ; then
+      echo '[ override-bashrc ]' '~/.bash' not a dir, mkdir '~/.bash' ...
+      if [ -e ~/.bash ] ; then
+        rm -r ~/.bash
+      fi
+      mkdir ~/.bash
+    fi
+
+    if [ -e ~/.bashrc ] ; then
+      echo '[ override-bashrc ]' moving '~/.bashrc' to '~/.bash/rc' ...
+      mv ~/.bashrc ~/.bash/rc
+    fi
+
+    cp -v ./bashrc ~/.bashrc
+
+    echo $'\n' > ~/.bashrc
+    echo $'source ./bash/*' > ~/.bashrc
+    echo $'\n' > ~/.bashrc
+  fi
+}
+
 echo "pushing files to home dir..."
 setup-cache
 echo
+override-bashrc
 copy-to-home .bash_aliases
 copy-to-home .bash_env
 copy-to-home .bash_profile
