@@ -1,0 +1,166 @@
+
+# open with default editor, defined by `EDIT` in your env, falling back to `open`
+edit () { ${EDIT:-'code'} $@ ; }
+
+# # # #
+# MacOS
+# # # #
+
+# control whether the OS GUI shows hidden files
+alias showHiddenFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
+alias hideHiddenFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
+set-computer-name () {
+  scutil --set ComputerName "$1" &&
+  scutil --set HostName "$1"
+}
+
+# # # # # #
+# Terminal
+# # # # # #
+
+alias edit-bash="edit ~/.bash*"
+alias edit-aliases="edit ~/.bash_aliases"
+alias edit-env="edit ~/.bash_env"
+alias edit-private="edit ~/.bash_private"
+alias edit-profile="edit ~/.bash_profile"
+alias edit-bash-all="edit ~/.bash*"
+alias reprofile="VERBOSE_REPROFILE=true source ~/.bash_profile"
+alias realias="source-all ~/.bash_aliases"
+
+# # # #
+# Bash
+# # # #
+
+alias cdc='pwd | pbcopy'
+alias cdp='cd $(pbpaste)'
+alias grepc="grep -iE --color=always"
+alias grepv="grep -viE"
+alias lookfor="find . | grep -iE"
+alias lookforc="find . | grepc"
+alias lookfor1="find . -maxdepth 1 | grep -iE"
+alias lookfor1c="find . -maxdepth 1 | grepc"
+alias lookfor2="find . -maxdepth 2 | grep -iE"
+alias lookfor2c="find . -maxdepth 2 | grepc"
+alias lookfor3="find . -maxdepth 3 | grep -iE"
+alias lookfor3c="find . -maxdepth 3 | grepc"
+alias lookfor4="find . -maxdepth 4 | grep -iE"
+alias lookfor4c="find . -maxdepth 4 | grepc"
+alias lsc="ls -FG"
+alias lsc2="find . -type d -depth 1 -print -exec ls -FG1 {} \; -exec echo \;"
+alias lscr="find . -type d -mindepth 1 -print -exec ls -FG1 {} \; -exec echo \;"
+
+# # # # # #
+# Utilities
+# # # # # #
+
+space() { n=${1-15} ; for i in $(seq $n); do echo ; done }
+
+# syntax: countlines <regex to include> [<regex to exclude>]
+countlines () { find . | grep -iE --color=never $1 | grep -v --color=never ${2:-"^$"} | xargs wc -l | grep -iE --color=always "$1|(.*total$)"; }
+echo-run () {
+  echo
+  echo $@
+  "$@"
+}
+# prefix a command with this to preserve its colored output when piping
+unbuff () {
+  script -q >(cat) $* >/dev/null
+}
+
+date-modified-view () {
+  date -r "$1" "+%Y-%m-%dT%H:%M:%S"
+}
+date-modified-set () {
+  echo "updating date modified for $1"
+  echo "  from $(date-modified-view $1)"
+  echo "  to $2"
+  touch -d "$2" "$1"
+}
+date-modified-copy () {
+  touch -d "$(date-modified-view $1)" "$2"
+}
+
+# prints a grid of current colors
+# credit -> https://unix.stackexchange.com/a/285956/104523
+function colorgrid( )
+{
+    iter=16
+    while [ $iter -lt 52 ]
+    do
+        second=$[$iter+36]
+        third=$[$second+36]
+        four=$[$third+36]
+        five=$[$four+36]
+        six=$[$five+36]
+        seven=$[$six+36]
+        if [ $seven -gt 250 ];then seven=$[$seven-251]; fi
+
+        echo -en "\033[38;5;$(echo $iter)m█ "
+        printf "%03d" $iter
+        echo -en "   \033[38;5;$(echo $second)m█ "
+        printf "%03d" $second
+        echo -en "   \033[38;5;$(echo $third)m█ "
+        printf "%03d" $third
+        echo -en "   \033[38;5;$(echo $four)m█ "
+        printf "%03d" $four
+        echo -en "   \033[38;5;$(echo $five)m█ "
+        printf "%03d" $five
+        echo -en "   \033[38;5;$(echo $six)m█ "
+        printf "%03d" $six
+        echo -en "   \033[38;5;$(echo $seven)m█ "
+        printf "%03d" $seven
+
+        iter=$[$iter+1]
+        printf '\r\n'
+    done
+}
+
+# alias ytdlmp3="youtube-dl --extract-audio --audio-format mp3 --output \"%(title)s.%(ext)s\""
+# alias ytdl="youtube-dl --output \"%(title)s.%(ext)s\""
+# trim video from start time to start time + duration
+# ffmpeg -i "input-file.mkv" -ss "HH:MM:SS.00" -t "HH:MM:SS.00" "output.mkv"
+# use vlc's file > convert option to convert to mp3
+
+# # #
+# SSH
+# # #
+
+ssh-keygen-ed25519 () {
+  if [[ $# -ne 2 ]]; then
+    echo "Usage: ssh-keygen-ed25519 id_privatekey_name my.email@gmail.com" >&2
+    return 2
+  fi
+  local KEY_NAME="$1"
+  local EMAIL="$2"
+  ssh-keygen -a 100 -t ed25519 -f ~/.ssh/"$KEY_NAME" -C “$EMAIL\ @\ $HOSTNAME”
+}
+
+# # # # #
+# VS Code
+# # # # #
+
+alias edit-snippets="edit ~/Library/Application\ Support/Code/User/Snippets"
+alias edit-vscode-settings="edit ~/.Library/Application\ Support/Code/User/settings.json"
+
+# # #
+# AWS
+# # #
+
+aws-edit-profiles() {
+  edit ~/.aws/config ~/.aws/credentials
+}
+
+aws-set-profile () {
+  echo "Available AWS profiles:"
+  aws configure list-profiles
+  echo
+  echo "Which would you like to use?"
+  read profile
+  echo
+  echo "AWS_PROFILE=$profile"
+  export AWS_PROFILE="$profile"
+}
+
+aws-whoami () {
+  echo $AWS_PROFILE
+}
