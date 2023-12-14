@@ -52,7 +52,6 @@ copy-from-home () {
 }
 
 echo "pulling files from home dir..."
-setup-cache
 echo
 copy-from-home .bash_aliases
 copy-from-home .bash_colors
@@ -63,5 +62,6 @@ copy-from-home .bashrc
 copy-from-home .hyper.js
 copy-from-home .ripgrep
 copy-from-home .tmux.conf
+echo
 echo "...done!"
 echo
