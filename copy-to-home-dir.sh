@@ -2,7 +2,12 @@
 
 set -e
 
+source .bash_colors
+
 CACHE_DIR="./tmp-cache"
+
+CODE_SUCCESS=10
+CODE_SKIP=20
 
 setup-cache () {
   if [ -e "$CACHE_DIR" ] ; then
@@ -12,72 +17,103 @@ setup-cache () {
   echo " (caching old home files to $CACHE_DIR)"
 }
 
-copy-to-home () {
-  if [ -e ./"$1" ] ; then
-    if [ -e ~/"$1" ] ; then
-      # cache before overwriting
-      cp -r ~/"$1" "$CACHE_DIR/$1"
-      # remove and copy
+proceed? () {
+  while true ; do
+    echo
+    read -p "Do you want to proceed? (y/n) " yn
 
-      # if the source and destination aren't both files or directories
-      # then delete the destination to prevent copying from failing
-      if [ "$(file -b ~/$1)" != "$(file -b ./$1)" ] ; then
-        rm -r ~/"$1"
-      fi
-    fi
-    cp -vr ./"$1" ~/
+    case $yn in
+      [yY] )
+        break;;
+      [nN] )
+        echo "  exiting..."
+        exit 1;;
+      * )
+        echo "  invalid response"
+    esac
+  done
+}
+
+get-exit-symbol () {
+  local exit_code=$1
+  local symbol="$2"
+
+  case $exit_code in
+    $CODE_SUCCESS )
+      echo -n "$Green $symbol $Color_Off" ;;
+    $CODE_SKIP )
+      echo -n "$Yellow $symbol $Color_Off" ;;
+    * )
+      echo -n "$Red $symbol $Color_Off" ;;
+  esac
+}
+
+copy-to-home () {
+  local path="$1"
+  if [ -e ./"$path" ] ; then
+    get-exit-symbol $(cache-home-path "$path") cache
+    get-exit-symbol $(clean-home-path "$path") clean
+    get-exit-symbol $(update-home-path "$path") update
   else
-    echo "skipping" ~/"$1"
+    get-exit-symbol $CODE_SKIP cache
+    get-exit-symbol $CODE_SKIP clean
+    get-exit-symbol $CODE_SKIP update
   fi
+  echo " $path"
 }
 
 cache-home-path () {
   local path="$1"
   if [ -e ~/"$path" ] ; then
-    echo '[ cache ]' caching '~/'"$path"
-    cp -vr ~/"$path" "$CACHE_DIR/$path"
+    cp -r ~/"$path" "$CACHE_DIR/$path"
+    echo $CODE_SUCCESS
   else
-    echo '[ cache ]' skipping '~/'"$path"
+    echo $CODE_SKIP
   fi
 }
 
-override-bashrc () {
-  if [ -e ./.bashrc ] ; then
-    cache-home-path .bashrc
-    cache-home-path .bash
-
-    rm -r ~/.bashrc
-    rm -r ~/.bash
-
-    if [ ! -d ~/.bash ] ; then
-      echo '[ override-bashrc ]' '~/.bash' not a dir, mkdir '~/.bash' ...
-      if [ -e ~/.bash ] ; then
-        rm -r ~/.bash
-      fi
-      mkdir ~/.bash
-    fi
-
-    if [ -e ~/.bashrc ] ; then
-      echo '[ override-bashrc ]' moving '~/.bashrc' to '~/.bash/rc' ...
-      mv ~/.bashrc ~/.bash/rc
-    fi
-
-    cp -v ./bashrc ~/.bashrc
-
-    echo $'\n' > ~/.bashrc
-    echo $'source ./bash/*' > ~/.bashrc
-    echo $'\n' > ~/.bashrc
+clean-home-path () {
+  local path="$1"
+  if [ -e ~/"$path" ] ; then
+    rm -r ~/"$path"
+    echo $CODE_SUCCESS
+  else
+    echo $CODE_SKIP
   fi
 }
 
+update-home-path () {
+  local path="$1"
+  cp -r ./"$path" ~/
+  echo $CODE_SUCCESS
+}
+
+warn-overwrite () {
+  local filename="$1"
+  local suggested_filepath="~/.bash_private/$2"
+
+  if [ -e ./"$filename" ] ; then
+    if [ -e ~/"$filename" ] ; then
+      echo
+      echo '~/'"$filename"' exists, this will be overwritten!'
+      echo '  move this to '"$suggested_filepath"' if you wish to keep its contents'
+      proceed?
+    fi
+  fi
+}
+
+echo
 echo "pushing files to home dir..."
 setup-cache
+warn-overwrite .bashrc rc
+warn-overwrite .bash_profile profile
 echo
-override-bashrc
 copy-to-home .bash_aliases
+copy-to-home .bash_colors
 copy-to-home .bash_env
 copy-to-home .bash_profile
 copy-to-home .bash_ps1
+copy-to-home .bashrc
 copy-to-home .hyper.js
 copy-to-home .ripgrep
 copy-to-home .tmux.conf
