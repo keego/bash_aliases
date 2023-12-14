@@ -19,7 +19,8 @@ source-all () {
   fi
 }
 
-source ~/.bash_ps1
+source-all ~/.bash_colors
+source-all ~/.bash_ps1
 source-all ~/.bash_env
 source-all ~/.bash_aliases
 source-all ~/.bash_private
