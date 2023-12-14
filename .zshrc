@@ -149,15 +149,13 @@ parse-git-branch () {
 }
 
 set-ps1 () {
-  local comp_name="$1%m$Color_Off"
+  local comp_color="$1"
+  local comp_name="$comp_color%m$Color_Off"
   local user_name="$IBlack(%n)$Color_Off"
   local shell_cmd="$IBlack$ShellName$Color_Off"
-  local username="%n"
   local time="$IBlack"'$(date "+%r")'"$Color_Off"
   local exit_symbol="%(?.$Green.$Red)? %?$Color_Off"
   local prompt_symbol="%(!.$SuPromptSymbol.$PromptSymbol)"
-  local path_short="$Blue%1d$Color_Off"
-  local path_full="$Yellow%~$Color_Off"
 
   PS1=''
   PS1+=$'\n'"$comp_name $user_name $shell_cmd"

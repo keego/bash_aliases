@@ -120,35 +120,42 @@ source ~/.git-prompt.sh
 # This PS1 snippet was adopted from code for MAC/BSD from: http://allancraig.net/index.php?option=com_content&view=article&id=108:ps1-export-command-for-git&catid=45:general&Itemid=96
 # It was tweaked to work on UBUNTU 11.04 & 11.10 and be mo' better
 
-export PS1='\n'$Cyan$COMPUTER_NAME$IBlack'\n'$Time12h$Color_Off'$(git branch &>/dev/null;\
-if [ $? -eq 0 ]; then \
-  echo "$(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
-  if [ "$?" -eq "0" ]; then \
-    # @4 - Clean repository - nothing to commit
-    echo "'$Green'"$(__git_ps1 " (%s)"); \
+parse-git-branch () {
+  local path_short="$Blue$PathShort$Color_Off"
+  local path_full="$Yellow$PathFull$Color_Off"
+
+  git branch &>/dev/null
+  if [ $? -eq 0 ]; then 
+    echo `git status` | grep "nothing to commit" > /dev/null 2>&1
+    if [ "$?" -eq "0" ]; then
+      # @4 - Clean repository - nothing to commit
+      echo -n "$Green$(__git_ps1 " (%s)")"
+    else
+      # @5 - Changes to working tree
+      echo -n "$IRed$(__git_ps1 " {%s}")"
+    fi
+    echo " $Blue$path_short$Color_Off "
   else \
-    # @5 - Changes to working tree
-    echo "'$IRed'"$(__git_ps1 " {%s}"); \
-  fi) '$Blue$PathShort$Color_Off'\n'$PromptSymbol' "; \
-else \
-  # @2 - Prompt when not in GIT repo
-  echo " '$Yellow$PathFull$Color_Off'\n'$PromptSymbol' "; \
-fi)'
+    # @2 - Prompt when not in GIT repo
+    echo " $Yellow$path_full$Color_Off "
+  fi
+}
 
 set-ps1 () {
   local comp_color="$1"
-  PS1='\n'$comp_color$COMPUTER_NAME$IBlack'\n'$Time12h$Color_Off'$(git branch &>/dev/null;\
-  if [ $? -eq 0 ]; then \
-    echo "$(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
-    if [ "$?" -eq "0" ]; then \
-      # @4 - Clean repository - nothing to commit
-      echo "'$Green'"$(__git_ps1 " (%s)"); \
-    else \
-      # @5 - Changes to working tree
-      echo "'$IRed'"$(__git_ps1 " {%s}"); \
-    fi) '$Blue$PathShort$Color_Off'\n'$PromptSymbol' "; \
-  else \
-    # @2 - Prompt when not in GIT repo
-    echo " '$Yellow$PathFull$Color_Off'\n'$PromptSymbol' "; \
-  fi)'
+  local comp_name="$comp_color$COMPUTER_NAME$Color_Off"
+  local user_name="$IBlack(\u)$Color_Off"
+  local shell_cmd="$IBlack$ShellName$Color_Off"
+
+  local time="$IBlack"'$(date "+%r")'"$Color_Off"
+
+  local exit_symbol="%(?.$Green.$Red)? %?$Color_Off"
+  local prompt_symbol="%(!.$SuPromptSymbol.$PromptSymbol)"
+
+  PS1=''
+  PS1+=$'\n'"$comp_name $user_name $shell_cmd"
+  PS1+=$'\n'"$time $(parse-git-branch)"
+  PS1+=$'\n'"$exit_symbol $prompt_symbol "
 }
+
+set-ps1 $Yellow
