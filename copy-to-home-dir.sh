@@ -48,20 +48,6 @@ get-exit-symbol () {
   esac
 }
 
-copy-to-home () {
-  local path="$1"
-  if [ -e ./"$path" ] ; then
-    get-exit-symbol $(cache-home-path "$path") cache
-    get-exit-symbol $(clean-home-path "$path") clean
-    get-exit-symbol $(update-home-path "$path") update
-  else
-    get-exit-symbol $CODE_SKIP cache
-    get-exit-symbol $CODE_SKIP clean
-    get-exit-symbol $CODE_SKIP update
-  fi
-  echo " $path"
-}
-
 cache-home-path () {
   local path="$1"
   if [ -e ~/"$path" ] ; then
@@ -86,6 +72,20 @@ update-home-path () {
   local path="$1"
   cp -r ./"$path" ~/
   echo $CODE_SUCCESS
+}
+
+copy-to-home () {
+  local path="$1"
+  if [ -e ./"$path" ] ; then
+    get-exit-symbol $(cache-home-path "$path") cache
+    get-exit-symbol $(clean-home-path "$path") clean
+    get-exit-symbol $(update-home-path "$path") update
+  else
+    get-exit-symbol $CODE_SKIP cache
+    get-exit-symbol $CODE_SKIP clean
+    get-exit-symbol $CODE_SKIP update
+  fi
+  echo " $path"
 }
 
 warn-overwrite () {
@@ -117,5 +117,6 @@ copy-to-home .bashrc
 copy-to-home .hyper.js
 copy-to-home .ripgrep
 copy-to-home .tmux.conf
+echo
 echo "...done!"
 echo
