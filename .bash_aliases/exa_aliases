@@ -10,24 +10,33 @@ then
   alias la="exa -a ${EXA_OPTIONS}" # default + dotfiles
   alias lg="exa -Ga ${EXA_OPTIONS}" # list as grid + dotfiles
   alias lg\-="exa -G ${EXA_OPTIONS}" # list as grid
-  alias lgd="exa -GaD ${EXA_OPTIONS}" # list as grid, directories only
+  alias lgd="exa -GaD ${EXA_OPTIONS}" # list as grid + dotfilex, directories only
+  alias lgd\-="exa -GD ${EXA_OPTIONS}" # list as grid, directories only
   alias ll="exa -lha --git ${EXA_OPTIONS}" # list permissions + dotfiles
-  alias lld="exa -lhD ${EXA_OPTIONS}" # list permissions + dotfiles + directories
   alias ll\-="exa -lh --git ${EXA_OPTIONS}" # list permissions
+  alias lld="exa -alhD ${EXA_OPTIONS}" # list permissions + dotfiles + directories
+  alias lld\-="exa -lhD ${EXA_OPTIONS}" # list permissions + directories
   # replaces exa -TL <DEPTH>
-  function lt () { exa -lh --git ${EXA_OPTIONS} --tree --level="${1:-1}" ; }
-  dots () { echo -en "$Black $1 $Color_Off" ; }
+  function lt () { exa -lha --git ${EXA_OPTIONS} --tree --level="${1:-1}" ; }
+  function lt- () { exa -lh --git ${EXA_OPTIONS} --tree --level="${1:-1}" ; }
+
+  color-line () { echo -en "$1 $2$3 $Red$4 $Purple$5 $IBlack$6 $Color_Off" ; }
 
   alias exa\?='
-  echo -e "$Info Exa Options: ${Color_Off}" &&
-  echo -e "l $(dots ......)  default ${Purple} =ls ${Color_Off}" &&
-  echo -e "la $(dots .....)  default ${Red}  all ${Color_Off}" &&
-  echo -e "lg $(dots .....) ${Blue} grid ${Color_Off}    ${Red} all ${Color_Off}" &&
-  echo -e "lg- $(dots ....) ${Blue} grid ${Color_Off}    ${Purple} =ls ${Color_Off}" &&
-  echo -e "ll $(dots .....) ${Yellow} long ${Color_Off}    ${Red} all ${Color_Off}" &&
-  echo -e "ll- $(dots ....) ${Yellow} long ${Color_Off}" &&
-  echo -e "lld $(dots ....) ${Yellow} long ${Color_Off}    ${Red} dirs ${Color_Off}" &&
-  echo -e "lld- $(dots ...) ${Yellow} long ${Color_Off}    ${Red} all dirs ${Color_Off}" &&
-  echo -e "lt $(dots .....) ${Green} tree ${Color_Off}     specify depth, default = 1"
+  echo -e "${Info}Exa Shortcuts:" &&
+  echo -e "$(color-line "cmd     " "$IBlack"  "variant"  "include " "a.k.a."  "notes" )" &&
+  echo -e "$(color-line "--------" "$IBlack"  "-------"  "--------" "------"  "--------------------------")" &&
+  echo -e "$(color-line "l       " "$IBlack"  "default"  "        " "ls    "  "                          ")" &&
+  echo -e "$(color-line "la      " "$IBlack"  "default"  "all     " "ls -a "  "                          ")" &&
+  echo -e "$(color-line "lg      " "$Blue"    "grid   "  "all     " "ls -a "  "                          ")" &&
+  echo -e "$(color-line "lg-     " "$Blue"    "grid   "  "        " "ls    "  "                          ")" &&
+  echo -e "$(color-line "lgd     " "$Blue"    "grid   "  "all dirs" "      "  "                          ")" &&
+  echo -e "$(color-line "lgd-    " "$Blue"    "grid   "  "    dirs" "      "  "                          ")" &&
+  echo -e "$(color-line "ll      " "$Yellow"  "long   "  "all     " "ls -la"  "                          ")" &&
+  echo -e "$(color-line "ll-     " "$Yellow"  "long   "  "        " "ls l  "  "                          ")" &&
+  echo -e "$(color-line "lld     " "$Yellow"  "long   "  "all dirs" "      "  "                          ")" &&
+  echo -e "$(color-line "lld-    " "$Yellow"  "long   "  "    dirs" "      "  "                          ")" &&
+  echo -e "$(color-line "lt <n>  " "$Green"   "tree   "  "all     " "      "  "specify depth, default = 1")" &&
+  echo -e "$(color-line "lt- <n> " "$Green"   "tree   "  "        " "      "  "specify depth, default = 1")"
   '
 fi

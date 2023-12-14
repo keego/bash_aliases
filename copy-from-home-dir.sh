@@ -2,35 +2,64 @@
 
 set -e
 
-CACHE_DIR="./tmp-cache"
+CODE_SUCCESS=10
+CODE_SKIP=20
 
-setup-cache () {
-  if [ -e "$CACHE_DIR" ] ; then
-   rm -r "$CACHE_DIR"
+get-exit-symbol () {
+  local exit_code=$1
+  local symbol="$2"
+
+  case $exit_code in
+    $CODE_SUCCESS )
+      echo -n "$Green $symbol $Color_Off" ;;
+    $CODE_SKIP )
+      echo -n "$Yellow $symbol $Color_Off" ;;
+    * )
+      echo -n "$Red $symbol $Color_Off" ;;
+  esac
+}
+
+clean-local-path () {
+  local path="$1"
+  if [ -e ./"$path" ] ; then
+    rm -r ./"$path"
+    echo $CODE_SUCCESS
+  else
+    echo $CODE_SKIP
   fi
-  mkdir "$CACHE_DIR"
-  echo " (caching local files to $CACHE_DIR)"
+}
+
+update-local-path () {
+  local path="$1"
+  if [ -e ~/"$path" ] ; then
+    cp -r ~/"$path" ./
+    echo $CODE_SUCCESS
+  else
+    echo $CODE_SKIP
+  fi
 }
 
 copy-from-home () {
-  if [ -e ~/"$1" ] ; then
-    # cache before overwriting
-    cp -r ./"$1" "$CACHE_DIR/$1"
-    # remove and copy
-    rm -r ./"$1"
-    cp -vr ~/"$1" ./
+  local path="$1"
+  if [ -e ./"$path" ] ; then
+    get-exit-symbol $(clean-local-path "$path") clean
+    get-exit-symbol $(update-local-path "$path") update
   else
-    echo "skipping" ~/"$1"
+    get-exit-symbol $CODE_SKIP clean
+    get-exit-symbol $CODE_SKIP update
   fi
+  echo " $path"
 }
 
 echo "pulling files from home dir..."
 setup-cache
 echo
 copy-from-home .bash_aliases
+copy-from-home .bash_colors
 copy-from-home .bash_env
 copy-from-home .bash_profile
 copy-from-home .bash_ps1
+copy-from-home .bashrc
 copy-from-home .hyper.js
 copy-from-home .ripgrep
 copy-from-home .tmux.conf
