@@ -32,7 +32,7 @@ alias realias="source-all ~/.bash_aliases"
 # # # #
 
 alias cdc='pwd | pbcopy'
-alias cdp='cd $(pbpaste)'
+alias cdp='cd "$(pbpaste)"'
 alias grepc="grep -iE --color=always"
 alias grepv="grep -viE"
 alias lookfor="find . | grep -iE"
