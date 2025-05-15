@@ -32,15 +32,15 @@ parse-git-branch () {
     echo `git status` | grep "nothing to commit" > /dev/null 2>&1
     if [ "$?" -eq "0" ]; then
       # @4 - Clean repository - nothing to commit
-      echo -n "$Green$(__git_ps1 " (%s)")$Color_Off"
+      echo -ne "$Green$(__git_ps1 " (%s)")$Color_Off"
     else
       # @5 - Changes to working tree
-      echo -n "$IRed$(__git_ps1 " {%s}")$Color_Off"
+      echo -ne "$IRed$(__git_ps1 " {%s}")$Color_Off"
     fi
-    echo " $Blue"
+    echo -e " $Blue"
   else
     # @2 - Prompt when not in GIT repo
-    echo " $Yellow"
+    echo -e " $Yellow"
   fi
 }
 
