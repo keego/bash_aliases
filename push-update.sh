@@ -25,7 +25,13 @@ NOW_BRANCH="update-$(date '+%Y-%m-%d--%H-%M-%S')"
 TITLE="Updating as of $NOW"
 COMMIT_COUNT=`git rev-list --count origin/master..HEAD`
 BODY=$'Changes:\n'
-BODY+=`git log --no-decorate --abbrev-commit -5 --pretty='- (%h) %s'`
+BODY+=`git log --no-decorate --abbrev-commit -${COMMIT_COUNT} --pretty='- (%h) %s'`
+
+echo "Creating PR with info:"
+echo "-----"
+echo "$TITLE"
+echo "$BODY"
+echo "-----"
 
 git checkout -b "$NOW_BRANCH" &&
 echo &&

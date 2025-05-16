@@ -29,17 +29,27 @@ parse-git-branch () {
 
   git branch &>/dev/null
   if [ "$?" -eq 0 ]; then 
+    # (in git repo)
+
     echo `git status` | grep "nothing to commit" > /dev/null 2>&1
     if [ "$?" -eq "0" ]; then
-      # @4 - Clean repository - nothing to commit
+      # (clean repository - nothing to commit)
+
+      # stylize branch info
       echo -ne "$Green$(__git_ps1 " (%s)")$Color_Off"
     else
-      # @5 - Changes to working tree
+      # (changes to working tree)
+
+      # stylize branch info
       echo -ne "$IRed$(__git_ps1 " {%s}")$Color_Off"
     fi
+
+    # path color
     echo -e " $Blue"
   else
-    # @2 - Prompt when not in GIT repo
+    # (outside git repo)
+
+    # path color
     echo -e " $Yellow"
   fi
 }
