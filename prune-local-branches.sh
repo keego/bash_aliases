@@ -8,7 +8,8 @@ echo "Pruning local branches that have been deleted from the remote repository..
 
 echo
 echo "branches before pruning:"
-git branch
+git branch -vv
+echo
 
 # delete all local branches that have been deleted from the remote repository
 git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D
@@ -18,7 +19,8 @@ git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D
 
 echo
 echo "branches after pruning:"
-git branch
+git branch -vv
+echo
 
 
 echo "...done"
