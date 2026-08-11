@@ -1,29 +1,46 @@
 
-## exa
-exa >/dev/null 2>&1
-
-if [ "$?" -eq 0 ]
+## eza
+if ! command -v eza >/dev/null 2>&1 && [[ $- == *i* ]] && [ -t 0 ] && [ -z "${EZA_INSTALL_PROMPTED:-}" ]
 then
-  export EXA_OPTIONS="-F --group-directories-first --color=always" # classify files and group folders for human readability
-  # alias ls="lg" # Replaces ls with my alias for exa
-  alias l="exa ${EXA_OPTIONS}" # default
-  alias la="exa -a ${EXA_OPTIONS}" # default + dotfiles
-  alias lg="exa -Ga ${EXA_OPTIONS}" # list as grid + dotfiles
-  alias lg\-="exa -G ${EXA_OPTIONS}" # list as grid
-  alias lgd="exa -GaD ${EXA_OPTIONS}" # list as grid + dotfilex, directories only
-  alias lgd\-="exa -GD ${EXA_OPTIONS}" # list as grid, directories only
-  alias ll="exa -lha --git ${EXA_OPTIONS}" # list permissions + dotfiles
-  alias ll\-="exa -lh --git ${EXA_OPTIONS}" # list permissions
-  alias lld="exa -alhD ${EXA_OPTIONS}" # list permissions + dotfiles + directories
-  alias lld\-="exa -lhD ${EXA_OPTIONS}" # list permissions + directories
-  # replaces exa -TL <DEPTH>
-  function lt () { exa -lha --git ${EXA_OPTIONS} --tree --level="${1:-1}" ; }
-  function lt- () { exa -lh --git ${EXA_OPTIONS} --tree --level="${1:-1}" ; }
+  EZA_INSTALL_PROMPTED=1
+  read -r -p "eza is not installed. Install it with Homebrew? (y/n) " eza_install_response
+
+  case "$eza_install_response" in
+    [yY] | [yY][eE][sS] )
+      if command -v brew >/dev/null 2>&1
+      then
+        brew install eza || echo "eza installation failed; its aliases will not be loaded."
+      else
+        echo "Homebrew is not installed; install it before installing eza."
+      fi
+      ;;
+  esac
+
+  unset eza_install_response
+fi
+
+if command -v eza >/dev/null 2>&1
+then
+  export EZA_OPTIONS="-F --group-directories-first --color=always" # classify files and group folders for human readability
+  # alias ls="lg" # Replaces ls with my alias for eza
+  alias l="eza ${EZA_OPTIONS}" # default
+  alias la="eza -a ${EZA_OPTIONS}" # default + dotfiles
+  alias lg="eza -Ga ${EZA_OPTIONS}" # list as grid + dotfiles
+  alias lg\-="eza -G ${EZA_OPTIONS}" # list as grid
+  alias lgd="eza -GaD ${EZA_OPTIONS}" # list as grid + dotfiles, directories only
+  alias lgd\-="eza -GD ${EZA_OPTIONS}" # list as grid, directories only
+  alias ll="eza -lha --git ${EZA_OPTIONS}" # list permissions + dotfiles
+  alias ll\-="eza -lh --git ${EZA_OPTIONS}" # list permissions
+  alias lld="eza -alhD ${EZA_OPTIONS}" # list permissions + dotfiles + directories
+  alias lld\-="eza -lhD ${EZA_OPTIONS}" # list permissions + directories
+  # replaces eza -TL <DEPTH>
+  function lt () { eza -lha --git ${EZA_OPTIONS} --tree --level="${1:-1}" ; }
+  function lt- () { eza -lh --git ${EZA_OPTIONS} --tree --level="${1:-1}" ; }
 
   color-line () { echo -en "$1 $2$3 $Red$4 $Purple$5 $IBlack$6 $Color_Off" ; }
 
-  alias exa\?='
-  echo -e "${Info}Exa Shortcuts:" &&
+  alias eza\?='
+  echo -e "${Info}Eza Shortcuts:" &&
   echo -e "$(color-line "cmd     " "$IBlack"  "variant"  "include " "a.k.a."  "notes" )" &&
   echo -e "$(color-line "--------" "$IBlack"  "-------"  "--------" "------"  "--------------------------")" &&
   echo -e "$(color-line "l       " "$IBlack"  "default"  "        " "ls    "  "                          ")" &&
