@@ -36,7 +36,7 @@ echo "-----"
 git checkout -b "$NOW_BRANCH" &&
 echo &&
 
-git push origin "$NOW_BRANCH" &&
+git push -u origin "$NOW_BRANCH" &&
 echo &&
 
 open "https://github.com/keego/bash_aliases/compare/master...$NOW_BRANCH?quick_pull=1&title=$TITLE&body=$BODY"
